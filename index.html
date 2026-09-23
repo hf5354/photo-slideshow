@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Slideshow — 自訂秒數循環播放</title>
-  <meta name="description" content="上傳多張相片，為每張設定播放秒數，全螢幕循環 slideshow" />
+  <meta name="description" content="上傳多張相片與背景音樂，為每張設定播放秒數，全螢幕循環 slideshow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -32,7 +32,6 @@
       line-height: 1.5;
     }
 
-    /* ===== Setup Screen ===== */
     #setup {
       max-width: 820px;
       margin: 0 auto;
@@ -62,7 +61,6 @@
       font-size: 0.95rem;
     }
 
-    /* Drop zone */
     .dropzone {
       border: 2px dashed var(--border);
       border-radius: 16px;
@@ -71,7 +69,7 @@
       background: var(--surface);
       transition: border-color 0.2s, background 0.2s;
       cursor: pointer;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
     }
 
     .dropzone:hover,
@@ -101,7 +99,57 @@
       display: none;
     }
 
-    /* Global duration */
+    /* Music section */
+    .music-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px 16px;
+    }
+
+    .music-section .music-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .music-section .music-name {
+      color: var(--muted);
+      font-size: 0.9rem;
+      flex: 1;
+      min-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-section .music-name.has-file {
+      color: var(--success);
+    }
+
+    .volume-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volume-row label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .volume-row input[type="range"] {
+      width: 100px;
+      accent-color: var(--accent);
+    }
+
     .global-bar {
       display: flex;
       flex-wrap: wrap;
@@ -187,7 +235,6 @@
       background: rgba(239, 68, 68, 0.12);
     }
 
-    /* Photo list */
     .photo-list {
       display: flex;
       flex-direction: column;
@@ -269,7 +316,7 @@
       justify-content: center;
     }
 
-    /* ===== Slideshow Screen ===== */
+    /* Slideshow */
     #slideshow {
       display: none;
       position: fixed;
@@ -304,7 +351,6 @@
       opacity: 0;
     }
 
-    /* Controls overlay */
     .overlay {
       position: absolute;
       left: 0;
@@ -316,6 +362,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      flex-wrap: wrap;
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
@@ -333,11 +380,13 @@
       gap: 12px;
       color: #fff;
       font-size: 0.9rem;
+      flex-wrap: wrap;
     }
 
     .overlay-right {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .overlay .btn {
@@ -346,6 +395,8 @@
       color: #fff;
       border: 1px solid rgba(255,255,255,0.25);
       backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      font-size: 0.85rem;
     }
 
     .overlay .btn:hover {
@@ -362,7 +413,6 @@
       transition: width 0.05s linear;
     }
 
-    /* Keyboard hint */
     .kb-hint {
       position: absolute;
       top: 16px;
@@ -381,15 +431,16 @@
       header h1 { font-size: 1.45rem; }
       .photo-item { flex-wrap: wrap; }
       .photo-item img { width: 56px; height: 56px; }
+      .overlay-right { gap: 6px; }
+      .overlay .btn { padding: 7px 10px; font-size: 0.8rem; }
     }
   </style>
 </head>
 <body>
-  <!-- Setup UI -->
   <div id="setup">
     <header>
       <h1>📷 <span>Photo Slideshow</span></h1>
-      <p>上傳多張相片，為每張設定播放秒數，全螢幕循環播放</p>
+      <p>上傳多張相片與背景音樂，為每張設定播放秒數，全螢幕循環播放</p>
     </header>
 
     <div class="dropzone" id="dropzone">
@@ -397,6 +448,19 @@
       <h2>點擊或拖曳相片到這裡</h2>
       <p>支援 JPG、PNG、GIF、WebP · 可一次選多張</p>
       <input type="file" id="fileInput" accept="image/*" multiple />
+    </div>
+
+    <!-- Music -->
+    <div class="music-section">
+      <div class="music-label">🎵 背景音樂</div>
+      <span class="music-name" id="musicName">尚未選擇</span>
+      <button class="btn btn-ghost" id="musicPickBtn" type="button">選擇音樂</button>
+      <button class="btn btn-danger" id="musicClearBtn" type="button" style="display:none;">移除</button>
+      <div class="volume-row">
+        <label>音量</label>
+        <input type="range" id="volumeSlider" min="0" max="100" value="70" />
+      </div>
+      <input type="file" id="musicInput" accept="audio/*" style="display:none;" />
     </div>
 
     <div class="global-bar" id="globalBar" style="display:none;">
@@ -418,10 +482,9 @@
     </div>
   </div>
 
-  <!-- Slideshow UI -->
   <div id="slideshow">
     <div class="progress-bar" id="progressBar"></div>
-    <div class="kb-hint">← → 切換 · 空白鍵暫停 · Esc 結束</div>
+    <div class="kb-hint">← → 切換 · 空白鍵暫停 · F 全螢幕 · M 靜音 · Esc 結束</div>
     <div class="slide-container">
       <img id="slideImg" alt="" />
     </div>
@@ -429,15 +492,20 @@
       <div class="overlay-left">
         <span id="slideCounter">1 / 1</span>
         <span id="slideTimer"></span>
+        <span id="musicStatus" style="opacity:0.7;"></span>
       </div>
       <div class="overlay-right">
         <button class="btn" id="prevBtn" type="button">‹ 上一張</button>
         <button class="btn" id="pauseBtn" type="button">⏸ 暫停</button>
         <button class="btn" id="nextBtn" type="button">下一張 ›</button>
+        <button class="btn" id="muteBtn" type="button">🔊 音樂</button>
+        <button class="btn" id="fsBtn" type="button">⛶ 全螢幕</button>
         <button class="btn" id="exitBtn" type="button">✕ 結束</button>
       </div>
     </div>
   </div>
+
+  <audio id="bgAudio" loop preload="auto"></audio>
 
   <script>
     /** @type {{ id: string, file: File, url: string, duration: number }[]} */
@@ -448,6 +516,8 @@
     let isPaused = false;
     let slideStart = 0;
     let remainingMs = 0;
+    let musicUrl = null;
+    let musicMuted = false;
 
     const $ = (sel) => document.querySelector(sel);
     const dropzone = $('#dropzone');
@@ -466,8 +536,16 @@
     const slideCounter = $('#slideCounter');
     const slideTimer = $('#slideTimer');
     const pauseBtn = $('#pauseBtn');
+    const musicInput = $('#musicInput');
+    const musicName = $('#musicName');
+    const musicClearBtn = $('#musicClearBtn');
+    const volumeSlider = $('#volumeSlider');
+    const bgAudio = $('#bgAudio');
+    const muteBtn = $('#muteBtn');
+    const fsBtn = $('#fsBtn');
+    const musicStatus = $('#musicStatus');
 
-    // ---- Upload ----
+    // ---- Photo upload ----
     dropzone.addEventListener('click', () => fileInput.click());
 
     dropzone.addEventListener('dragover', (e) => {
@@ -521,7 +599,7 @@
       startBtn.disabled = false;
       photoCount.textContent = `共 ${photos.length} 張`;
 
-      photos.forEach((p, i) => {
+      photos.forEach((p) => {
         const item = document.createElement('div');
         item.className = 'photo-item';
         item.dataset.id = p.id;
@@ -542,7 +620,6 @@
         photoList.appendChild(item);
       });
 
-      // Duration change
       photoList.querySelectorAll('input[type="number"]').forEach(inp => {
         inp.addEventListener('change', () => {
           const id = inp.dataset.id;
@@ -553,7 +630,6 @@
         });
       });
 
-      // Remove
       photoList.querySelectorAll('[data-remove]').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = btn.dataset.remove;
@@ -569,7 +645,7 @@
 
     function escapeHtml(str) {
       return str.replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        '&': '&', '<': '<', '>': '>', '"': '"', "'": '&#39;'
       })[c]);
     }
 
@@ -586,6 +662,90 @@
       renderList();
     });
 
+    // ---- Music ----
+    $('#musicPickBtn').addEventListener('click', () => musicInput.click());
+
+    musicInput.addEventListener('change', () => {
+      const file = musicInput.files[0];
+      if (!file) return;
+      if (musicUrl) URL.revokeObjectURL(musicUrl);
+      musicUrl = URL.createObjectURL(file);
+      bgAudio.src = musicUrl;
+      bgAudio.volume = volumeSlider.value / 100;
+      musicName.textContent = file.name;
+      musicName.classList.add('has-file');
+      musicClearBtn.style.display = 'inline-flex';
+      musicInput.value = '';
+    });
+
+    musicClearBtn.addEventListener('click', () => {
+      bgAudio.pause();
+      bgAudio.removeAttribute('src');
+      bgAudio.load();
+      if (musicUrl) URL.revokeObjectURL(musicUrl);
+      musicUrl = null;
+      musicName.textContent = '尚未選擇';
+      musicName.classList.remove('has-file');
+      musicClearBtn.style.display = 'none';
+      musicStatus.textContent = '';
+    });
+
+    volumeSlider.addEventListener('input', () => {
+      bgAudio.volume = volumeSlider.value / 100;
+      if (!musicMuted && volumeSlider.value > 0) {
+        muteBtn.textContent = '🔊 音樂';
+      }
+    });
+
+    function playMusic() {
+      if (!musicUrl) {
+        musicStatus.textContent = '';
+        return;
+      }
+      bgAudio.muted = musicMuted;
+      bgAudio.volume = volumeSlider.value / 100;
+      const playPromise = bgAudio.play();
+      if (playPromise) {
+        playPromise.catch(() => {
+          musicStatus.textContent = '· 點一下以啟用音樂';
+        });
+      }
+      musicStatus.textContent = musicMuted ? '· 🔇 已靜音' : '· 🎵 播放中';
+    }
+
+    function stopMusic() {
+      bgAudio.pause();
+      bgAudio.currentTime = 0;
+      musicStatus.textContent = '';
+    }
+
+    function toggleMute() {
+      if (!musicUrl) return;
+      musicMuted = !musicMuted;
+      bgAudio.muted = musicMuted;
+      muteBtn.textContent = musicMuted ? '🔇 取消靜音' : '🔊 音樂';
+      musicStatus.textContent = musicMuted ? '· 🔇 已靜音' : '· 🎵 播放中';
+    }
+
+    muteBtn.addEventListener('click', toggleMute);
+
+    // ---- Fullscreen ----
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        slideshow.requestFullscreen?.() || slideshow.webkitRequestFullscreen?.();
+        fsBtn.textContent = '⛶ 退出全螢幕';
+      } else {
+        document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+        fsBtn.textContent = '⛶ 全螢幕';
+      }
+    }
+
+    fsBtn.addEventListener('click', toggleFullscreen);
+
+    document.addEventListener('fullscreenchange', () => {
+      fsBtn.textContent = document.fullscreenElement ? '⛶ 退出全螢幕' : '⛶ 全螢幕';
+    });
+
     // ---- Slideshow ----
     startBtn.addEventListener('click', startSlideshow);
     $('#exitBtn').addEventListener('click', exitSlideshow);
@@ -600,11 +760,16 @@
       pauseBtn.textContent = '⏸ 暫停';
       slideshow.classList.add('active');
       document.body.style.overflow = 'hidden';
+      playMusic();
       showSlide(0);
     }
 
     function exitSlideshow() {
       clearTimers();
+      stopMusic();
+      if (document.fullscreenElement) {
+        document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+      }
       slideshow.classList.remove('active');
       document.body.style.overflow = '';
       progressBar.style.width = '0%';
@@ -618,7 +783,6 @@
     function showSlide(index) {
       if (photos.length === 0) return;
 
-      // Normalize index for looping
       currentIndex = ((index % photos.length) + photos.length) % photos.length;
       const photo = photos[currentIndex];
 
@@ -663,18 +827,18 @@
 
     function togglePause() {
       if (isPaused) {
-        // Resume
         isPaused = false;
         pauseBtn.textContent = '⏸ 暫停';
         slideStart = Date.now();
         startProgress(remainingMs);
         timerId = setTimeout(() => goTo(currentIndex + 1), remainingMs);
+        if (musicUrl && !musicMuted) bgAudio.play().catch(() => {});
       } else {
-        // Pause
         isPaused = true;
         pauseBtn.textContent = '▶ 繼續';
         remainingMs = Math.max(0, remainingMs - (Date.now() - slideStart));
         clearTimers();
+        bgAudio.pause();
       }
     }
 
@@ -683,17 +847,25 @@
       if (!slideshow.classList.contains('active')) return;
 
       if (e.key === 'Escape') {
-        exitSlideshow();
-      } else if (e.key === 'ArrowRight' || e.key === ' ') {
-        e.preventDefault();
-        if (e.key === ' ') togglePause();
-        else goTo(currentIndex + 1);
+        if (document.fullscreenElement) {
+          document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+        } else {
+          exitSlideshow();
+        }
+      } else if (e.key === 'ArrowRight') {
+        goTo(currentIndex + 1);
       } else if (e.key === 'ArrowLeft') {
         goTo(currentIndex - 1);
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        togglePause();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'm' || e.key === 'M') {
+        toggleMute();
       }
     });
 
-    // Keep overlay visible briefly on touch
     let overlayTimer;
     slideshow.addEventListener('touchstart', () => {
       const overlay = $('#overlay');
