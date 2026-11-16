@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "src": "media/sample-1.jpg",
+      "type": "image",
+      "duration": 5,
+      "name": "範例相片 1（請替換成你的檔案）"
+    },
+    {
+      "src": "media/sample-2.jpg",
+      "type": "image",
+      "duration": 5,
+      "name": "範例相片 2"
+    }
+  ]
+}
