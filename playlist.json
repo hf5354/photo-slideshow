@@ -2,7 +2,6 @@
   "items": [
     { "src": "media/TSACOpenDay.jpg", "type": "image", "duration": 5, "name": "開放日" },
     { "src": "media/OS_LV1-1.jpg", "type": "image", "duration": 5, "name": "OS_LV1-1" },
-    { "src": "media/OS_LV1-2.jpg", "type": "image", "duration": 5, "name": "OS_LV1-2" },
-    { "src": "media/Gemini_Generated_Image.jpeg", "type": "image", "duration": 5, "name": "Gemini_Generated_Image.jpeg" }
+    { "src": "media/OS_LV1-2.jpg", "type": "image", "duration": 5, "name": "OS_LV1-2" }
   ]
 }
