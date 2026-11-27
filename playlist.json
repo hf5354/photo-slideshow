@@ -1,7 +1,10 @@
 {
   "items": [
     { "src": "media/TSACOpenDay.jpg", "type": "image", "duration": 5, "name": "開放日" },
-    { "src": "media/OS_LV1-1.jpg", "type": "image", "duration": 5, "name": "OS_LV1-1" },
-    { "src": "media/OS_LV1-2.jpg", "type": "image", "duration": 5, "name": "OS_LV1-2" }
+    { "src": "media/TSY-1.jpeg", "type": "image", "duration": 5, "name": "TSY" },
+    { "src": "media/TSY-2.jpeg", "type": "image", "duration": 5, "name": "TSY" },
+    { "src": "media/TSY-3.jpeg", "type": "image", "duration": 5, "name": "TSY" },
+    { "src": "media/TSY-4.jpg", "type": "image", "duration": 5, "name": "TSY" },
+    { "src": "media/TSY-5.jpeg", "type": "image", "duration": 5, "name": "TSY" },
   ]
 }
